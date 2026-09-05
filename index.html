@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formularios - Cafeteria Guarincito</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 1rem; background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f766e 100%); }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; max-width: 960px; width: 100%; }
+    .card { background: white; border-radius: 1.5rem; padding: 2rem; text-decoration: none; color: inherit; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 24px rgba(0,0,0,0.1); }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+    .card-icon { width: 56px; height: 56px; border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 1rem; }
+    .card h2 { font-size: 1.125rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .card p { font-size: 0.8rem; color: #64748b; line-height: 1.5; }
+    .alm .card-icon { background: #ecfdf5; color: #059669; }
+    .ref .card-icon { background: #eff6ff; color: #2563eb; }
+    .fin .card-icon { background: #faf5ff; color: #7c3aed; }
+  </style>
+</head>
+<body>
+  <div class="cards">
+    <a href="almuerzo.html" class="card alm">
+      <div class="card-icon">&#127859;</div>
+      <h2>Almuerzo Diurno</h2>
+      <p>Lunes a viernes - Jornada diurna. Horario: 11:30 AM a 2:30 PM</p>
+    </a>
+    <a href="refrigerio.html" class="card ref">
+      <div class="card-icon">&#127866;</div>
+      <h2>Refrigerio Nocturno</h2>
+      <p>Lunes a viernes - Jornada nocturna. Horario: 6:30 PM a 8:30 PM</p>
+    </a>
+    <a href="fin-de-semana.html" class="card fin">
+      <div class="card-icon">&#128197;</div>
+      <h2>Fin de Semana</h2>
+      <p>Sabado (ADEA/Regencia/Tecnico) y Domingo (Desayuno)</p>
+    </a>
+  </div>
+</body>
+</html>

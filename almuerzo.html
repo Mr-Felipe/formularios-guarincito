@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Almuerzo - Cafeteria Guarincito</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .fade-in { animation: fadeIn 0.3s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .code-glow { text-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+    select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; padding-right: 40px; cursor: pointer; }
+    select:hover { border-color: #10b981; background-color: #f0fdf4; }
+    select:focus { border-color: #10b981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15); background-color: #f0fdf4; }
+    select option { padding: 12px 16px; font-size: 14px; font-weight: 500; background: white; color: #334155; border-bottom: 1px solid #f1f5f9; }
+    select option:hover { background: #ecfdf5; color: #065f46; }
+    select option:first-child { color: #94a3b8; font-weight: 400; }
+    select option:not(:first-child):hover { background: #d1fae5; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-emerald-50/30 to-slate-100 min-h-screen flex items-center justify-center p-4">
+
+  <!-- FORMULARIO ALMUERZO -->
+  <div id="form-container" class="w-full max-w-md">
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-200/80 overflow-hidden">
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-emerald-600 to-emerald-700 p-6 text-center">
+        <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <h1 class="text-xl font-bold text-white">Confirmar Almuerzo</h1>
+        <p class="text-emerald-100 text-sm mt-1">Cafeteria Guarincito</p>
+        <div class="mt-2 inline-block px-3 py-1 bg-white/20 rounded-full text-xs font-bold text-white">ALMUERZO</div>
+      </div>
+
+      <!-- CERRADO -->
+      <div id="closedMsg" class="hidden p-8 text-center">
+        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <h3 class="text-lg font-bold text-slate-800 mb-2">Formulario de Almuerzo Cerrado</h3>
+        <p id="closedTimeMsg" class="text-sm text-slate-500">Este formulario solo funciona de <strong>05:00</strong> a <strong>10:08</strong>.</p>
+        <p class="text-xs text-slate-400 mt-2">Horario de Colombia (UTC-5)</p>
+      </div>
+
+      <!-- Form -->
+      <form id="confirmForm" class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Carrera</label>
+          <select id="carrera" required class="w-full py-2.5 px-3 text-sm rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-slate-700">
+            <option value="">Selecciona tu carrera...</option>
+          </select>
+        </div>
+        <div>
+          <label id="codigoLabel" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5 transition-colors">Codigo ID (4-5 digitos)</label>
+          <input type="text" id="codigo" required maxlength="6" placeholder="Ej: 79794"
+            class="w-full py-2.5 px-3 text-sm rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono font-bold text-slate-700 placeholder:text-slate-300 transition-all"
+            inputmode="numeric">
+          <p id="codigoError" class="hidden text-xs font-bold text-red-500 mt-1.5 transition-all">Maximo 5 digitos</p>
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Nombre completo</label>
+          <input type="text" id="nombre" required placeholder="Tu nombre como aparece en el padron"
+            class="w-full py-2.5 px-3 text-sm rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-slate-700 placeholder:text-slate-300">
+        </div>
+        <div id="errorMsg" class="hidden bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl"></div>
+        <button type="submit" id="submitBtn"
+          class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+          </svg>
+          Enviar Confirmacion
+        </button>
+      </form>
+
+      <div class="px-6 pb-6">
+        <div class="relative my-4">
+          <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-200"></div></div>
+          <div class="relative flex justify-center text-xs"><span class="bg-white px-3 text-slate-400 font-medium">o</span></div>
+        </div>
+        <button onclick="showVerify()" type="button"
+          class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          Buscar mi Confirmacion
+        </button>
+      </div>
+    </div>
+    <p class="text-center text-xs text-slate-400 mt-4">Tu codigo de confirmacion se mostrara al enviar</p>
+  </div>
+
+  <!-- PANTALLA DE CONFIRMACION -->
+  <div id="success-container" class="w-full max-w-md hidden">
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-200/80 overflow-hidden fade-in">
+      <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 p-6 text-center">
+        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+          <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+        <h2 class="text-xl font-bold text-white">Confirmacion Enviada</h2>
+        <p class="text-emerald-100 text-sm mt-1">Guarda este codigo como prueba</p>
+      </div>
+      <div class="p-6 text-center">
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Tu Codigo de Confirmacion</p>
+        <div class="bg-slate-50 border-2 border-emerald-200 rounded-xl py-4 px-6 mb-4">
+          <span id="confirmCode" class="text-3xl font-mono font-extrabold text-emerald-700 code-glow"></span>
+        </div>
+        <p class="text-xs text-slate-500 mb-4">Muestra este codigo al recepcionista para validar tu asistencia</p>
+        <div class="bg-slate-50 rounded-xl p-4 text-left space-y-2 mb-4">
+          <div class="flex justify-between text-sm"><span class="text-slate-500">Nombre:</span><span id="confirmNombre" class="font-semibold text-slate-800"></span></div>
+          <div class="flex justify-between text-sm"><span class="text-slate-500">Codigo:</span><span id="confirmCodigo" class="font-mono font-bold text-slate-800"></span></div>
+          <div class="flex justify-between text-sm"><span class="text-slate-500">Carrera:</span><span id="confirmCarrera" class="font-semibold text-slate-800"></span></div>
+          <div class="flex justify-between text-sm"><span class="text-slate-500">Fecha:</span><span id="confirmFecha" class="font-semibold text-slate-800"></span></div>
+        </div>
+        <button onclick="resetForm()"
+          class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition-all cursor-pointer">
+          Enviar otra confirmacion
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VERIFY SECTION -->
+  <div id="verify-container" class="w-full max-w-md hidden">
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-200/80 overflow-hidden fade-in">
+      <div class="bg-gradient-to-r from-slate-700 to-slate-800 p-6 text-center">
+        <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-3">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </div>
+        <h1 class="text-xl font-bold text-white">Buscar mi Confirmacion</h1>
+        <p class="text-slate-300 text-sm mt-1">Ingresa tu codigo de estudiante (5 digitos)</p>
+      </div>
+      <form id="verifyForm" class="p-6 space-y-4">
+        <div>
+          <input type="text" id="verifyInput" required placeholder="Ej: 79794" maxlength="5"
+            class="w-full py-3 px-4 text-center text-lg rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-500 font-mono font-bold text-slate-700 placeholder:text-slate-300"
+            inputmode="numeric">
+        </div>
+        <div id="verifyError" class="hidden bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl"></div>
+        <button type="submit" id="verifyBtn"
+          class="w-full py-3 bg-slate-700 hover:bg-slate-800 text-white font-bold text-sm rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          Buscar
+        </button>
+      </form>
+      <div class="px-6 pb-6">
+        <button onclick="hideVerify()" type="button"
+          class="w-full py-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-sm rounded-xl transition-all cursor-pointer">
+          Volver al formulario
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VERIFY RESULT: VALID -->
+  <div id="verify-valid" class="w-full max-w-md hidden">
+    <div class="bg-white rounded-2xl shadow-xl border border-emerald-200 overflow-hidden fade-in">
+      <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 p-6 text-center">
+        <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+          <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+        <h2 class="text-2xl font-bold text-white">TU CODIGO ES VALIDO</h2>
+        <p class="text-emerald-100 text-sm mt-1">Tu confirmacion quedo registrada correctamente</p>
+      </div>
+      <div class="p-6 space-y-3">
+        <div class="flex justify-between text-sm py-2 border-b border-slate-100"><span class="text-slate-500">Codigo:</span><span id="vrCodigo" class="font-mono font-bold text-slate-800"></span></div>
+        <div class="flex justify-between text-sm py-2 border-b border-slate-100"><span class="text-slate-500">Nombre:</span><span id="vrNombre" class="font-semibold text-slate-800"></span></div>
+        <div class="flex justify-between text-sm py-2 border-b border-slate-100"><span class="text-slate-500">Carrera:</span><span id="vrCarrera" class="font-semibold text-slate-800"></span></div>
+        <div class="flex justify-between text-sm py-2"><span class="text-slate-500">Enviado:</span><span id="vrFecha" class="font-semibold text-slate-800"></span></div>
+      </div>
+      <div class="p-4 border-t border-slate-100">
+        <button onclick="hideVerifyResult()" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition-all cursor-pointer">Volver al formulario</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VERIFY RESULT: INVALID -->
+  <div id="verify-invalid" class="w-full max-w-md hidden">
+    <div class="bg-white rounded-2xl shadow-xl border border-red-200 overflow-hidden fade-in">
+      <div class="bg-gradient-to-r from-red-500 to-red-600 p-6 text-center">
+        <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+          <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </div>
+        <h2 class="text-2xl font-bold text-white">NO ES VALIDO</h2>
+        <p id="vrInvalidReason" class="text-red-100 text-sm mt-1"></p>
+      </div>
+      <div class="p-4">
+        <button onclick="hideVerifyResult()" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition-all cursor-pointer">Volver al formulario</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://doztchubrnjlcxpzbhgt.supabase.co';
+    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvenRjaHVicm5qbGN4cHpiaGd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzMDM1NjQsImV4cCI6MjEwMzg3OTU2NH0._dlpaCg91GX--eoBkC9kFnM_CJbmgYNQ7TapBrUHpLo';
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    const TIPO_COMIDA_ID = 2;
+    const TIPO = 'almuerzo';
+
+    let config = { activo: true, hora_inicio: '05:00', hora_fin: '10:08' };
+
+    function timeToMinutes(timeStr) {
+      const [h, m] = timeStr.split(':').map(Number);
+      return h * 60 + m;
+    }
+
+    function isOpen() {
+      if (!config.activo) return false;
+      const now = new Date();
+      const colombiaTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
+      const totalMin = colombiaTime.getHours() * 60 + colombiaTime.getMinutes();
+      const inicio = timeToMinutes(config.hora_inicio);
+      const fin = timeToMinutes(config.hora_fin);
+
+      // Handle crossing midnight (e.g. 19:41 to 10:08)
+      if (inicio > fin) {
+        return totalMin >= inicio || totalMin <= fin;
+      }
+      return totalMin >= inicio && totalMin <= fin;
+    }
+
+    async function loadConfig() {
+      const { data } = await db.from('form_config').select('*').eq('tipo', TIPO).single();
+      if (data) config = data;
+      checkTime();
+    }
+
+    function checkTime() {
+      if (!isOpen()) {
+        document.getElementById('confirmForm').classList.add('hidden');
+        document.getElementById('closedMsg').classList.remove('hidden');
+        const msg = !config.activo
+          ? 'Este formulario ha sido cerrado por el administrador.'
+          : `Este formulario solo funciona de <strong>${config.hora_inicio}</strong> a <strong>${config.hora_fin}</strong>.`;
+        document.getElementById('closedTimeMsg').innerHTML = msg;
+      }
+    }
+
+    async function loadCarreras() {
+      // Get carrera_ids that have servicio_id = 2 (almuerzo) in carrera_servicio
+      const { data: servicios } = await db.from('carrera_servicio').select('carrera_id').eq('servicio_id', 2).eq('activo', true);
+      const carreraIds = [...new Set((servicios || []).map(s => s.carrera_id))];
+
+      if (carreraIds.length === 0) {
+        console.warn('No hay carreras configuradas para almuerzo');
+        return;
+      }
+
+      const { data, error } = await db.from('carreras').select('id, nombre, jornada').in('id', carreraIds).eq('activo', true).order('nombre');
+      if (error) { console.error(error); return; }
+      const select = document.getElementById('carrera');
+      data.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = `${c.nombre} (${c.jornada})`;
+        select.appendChild(opt);
+      });
+    }
+
+    const codigoInput = document.getElementById('codigo');
+    const codigoLabel = document.getElementById('codigoLabel');
+    const codigoError = document.getElementById('codigoError');
+    codigoInput.addEventListener('input', () => {
+      if (codigoInput.value.length > 5) {
+        codigoInput.value = codigoInput.value.slice(0, 5);
+      }
+      if (codigoInput.value.length >= 5) {
+        codigoLabel.classList.add('text-red-500');
+        codigoLabel.classList.remove('text-slate-500');
+        codigoError.classList.remove('hidden');
+      } else {
+        codigoLabel.classList.remove('text-red-500');
+        codigoLabel.classList.add('text-slate-500');
+        codigoError.classList.add('hidden');
+      }
+    });
+
+    document.getElementById('confirmForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!isOpen()) {
+        showError(!config.activo ? 'El formulario ha sido cerrado por el administrador.' : 'El formulario de almuerzo esta cerrado fuera de horario.');
+        return;
+      }
+      const btn = document.getElementById('submitBtn');
+      const errorDiv = document.getElementById('errorMsg');
+      errorDiv.classList.add('hidden');
+      btn.disabled = true;
+      btn.innerHTML = '<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Enviando...';
+
+      const carrera_id = Number(document.getElementById('carrera').value);
+      const codigo_id = document.getElementById('codigo').value.trim();
+      const nombre = document.getElementById('nombre').value.trim();
+
+      if (!carrera_id || !codigo_id || !nombre) {
+        showError('Todos los campos son obligatorios');
+        resetBtn();
+        return;
+      }
+
+      const { data, error } = await db.rpc('fn_insert_confirmacion_web', {
+        p_codigo_id: codigo_id,
+        p_carrera_id: carrera_id,
+        p_nombre: nombre,
+        p_tipo_comida_id: TIPO_COMIDA_ID
+      });
+
+      if (error) {
+        console.error(error);
+        showError('Error al enviar. Intenta de nuevo.');
+        resetBtn();
+        return;
+      }
+
+      const result = data?.[0];
+      if (!result?.confirmacion_id) {
+        showError('Registro enviado pero no se pudo obtener el codigo. Consulta con el recepcionista.');
+        resetBtn();
+        return;
+      }
+
+      if (result.motivo_alerta === 'no_en_padron') {
+        showError('Tu codigo no esta registrado en el padron de beneficiarios.');
+        resetBtn();
+        return;
+      }
+
+      const fecha = new Date().toLocaleString('es-CO', { timeZone: 'America/Bogota' });
+      showSuccess(result.confirmacion_id, codigo_id, nombre, '', fecha);
+      resetBtn();
+    });
+
+    function showError(msg) {
+      const div = document.getElementById('errorMsg');
+      div.textContent = msg;
+      div.classList.remove('hidden');
+    }
+
+    function resetBtn() {
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = false;
+      btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg> Enviar Confirmacion';
+    }
+
+    function showSuccess(id, codigo, nombre, carrera, fecha) {
+      document.getElementById('form-container').classList.add('hidden');
+      document.getElementById('success-container').classList.remove('hidden');
+      document.getElementById('confirmCode').textContent = `${String(id).padStart(4, '0')}`;
+      document.getElementById('confirmNombre').textContent = nombre;
+      document.getElementById('confirmCodigo').textContent = codigo;
+      document.getElementById('confirmCarrera').textContent = carrera;
+      document.getElementById('confirmFecha').textContent = fecha;
+    }
+
+    function resetForm() {
+      document.getElementById('form-container').classList.remove('hidden');
+      document.getElementById('success-container').classList.add('hidden');
+      document.getElementById('confirmForm').reset();
+    }
+
+    function showVerify() {
+      document.getElementById('form-container').classList.add('hidden');
+      document.getElementById('success-container').classList.add('hidden');
+      document.getElementById('verify-container').classList.remove('hidden');
+    }
+
+    function hideVerify() {
+      document.getElementById('verify-container').classList.add('hidden');
+      document.getElementById('form-container').classList.remove('hidden');
+      document.getElementById('verifyInput').value = '';
+      document.getElementById('verifyError').classList.add('hidden');
+    }
+
+    function hideVerifyResult() {
+      document.getElementById('verify-valid').classList.add('hidden');
+      document.getElementById('verify-invalid').classList.add('hidden');
+      document.getElementById('form-container').classList.remove('hidden');
+    }
+
+    document.getElementById('verifyForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const input = document.getElementById('verifyInput').value.trim();
+      const errorDiv = document.getElementById('verifyError');
+      errorDiv.classList.add('hidden');
+
+      if (!input || input.length < 3) {
+        errorDiv.textContent = 'Ingresa tu codigo de estudiante (minimo 3 digitos)';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+
+      const btn = document.getElementById('verifyBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Buscando...';
+
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      const todayPattern = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()}%`;
+
+      const { data, error } = await db.from('confirmaciones')
+        .select('*').eq('codigo_id', input).like('fecha', todayPattern)
+        .eq('tipo_comida_id', TIPO_COMIDA_ID)
+        .order('id', { ascending: false }).limit(1).maybeSingle();
+
+      btn.disabled = false;
+      btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg> Buscar';
+
+      if (error || !data) {
+        document.getElementById('verify-container').classList.add('hidden');
+        document.getElementById('verify-invalid').classList.remove('hidden');
+        document.getElementById('vrInvalidReason').textContent = 'No se encontro tu confirmacion de almuerzo para hoy.';
+        return;
+      }
+
+      document.getElementById('verify-container').classList.add('hidden');
+      document.getElementById('verify-valid').classList.remove('hidden');
+      document.getElementById('vrCodigo').textContent = `${String(data.id).padStart(4, '0')}`;
+      document.getElementById('vrNombre').textContent = data.nombre_en_form || data.beneficiario_nombre || 'Sin nombre';
+      document.getElementById('vrCarrera').textContent = data.carrera_en_form || data.carrera_nombre || 'Sin carrera';
+      document.getElementById('vrFecha').textContent = data.fecha || '';
+    });
+
+    loadConfig();
+    loadCarreras();
+  </script>
+</body>
+</html>

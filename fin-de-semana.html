@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Confirmacion Fin de Semana - Cafeteria Guarincito</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+    body.sabado { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f766e 100%); }
+    body.domingo { background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 50%, #7c3aed 100%); }
+    .fade-in { animation: fadeIn 0.4s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .pulse { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+  </style>
+</head>
+<body>
+  <!-- SABADO VIEW -->
+  <div id="sabado-view" class="w-full max-w-md hidden">
+    <div class="text-center mb-6">
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-xs font-semibold mb-3 border border-white/20">
+        <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span></span>
+        Sabado - Cafeteria Guarincito
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Confirmar Racion</h1>
+      <p class="text-white/60 text-sm mt-1" id="sabado-horario">Almuerzo 10:08 AM | Refrigerio 6:00 PM</p>
+    </div>
+    <div class="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden fade-in">
+      <div class="bg-gradient-to-r from-teal-500 to-emerald-600 p-5 text-center">
+        <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-2">
+          <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h2 class="text-xl font-bold text-white">SABADO</h2>
+        <p class="text-emerald-100 text-xs mt-0.5">ADEA: Almuerzo 10:08 AM | Regencia/Tecnico: Refrigerio 6 PM</p>
+      </div>
+      <form id="sabadoForm" class="p-5 space-y-4">
+        <div>
+          <label id="sabado-tipo-label" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Tipo de Servicio</label>
+          <select id="sabado-tipo" required class="w-full py-3 px-4 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500/30 cursor-pointer">
+            <option value="">Seleccionar servicio...</option>
+            <option value="2">Almuerzo (ADEA)</option>
+            <option value="3">Refrigerio (Regencia / Tecnico en Procesos)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Carrera</label>
+          <select id="sabado-carrera" required class="w-full py-3 px-4 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500/30 cursor-pointer">
+            <option value="">Seleccionar carrera...</option>
+          </select>
+        </div>
+        <div>
+          <label id="sabado-codigoLabel" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Codigo de Estudiante</label>
+          <input type="text" id="sabado-codigo" required placeholder="Ej: 79794" maxlength="5"
+            class="w-full py-3 px-4 text-center text-lg rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500 font-mono font-bold text-slate-700 placeholder:text-slate-300"
+            inputmode="numeric">
+          <p id="sabado-codigoError" class="hidden text-[11px] text-red-500 font-medium mt-1">El codigo debe ser de 5 digitos</p>
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Nombre Completo</label>
+          <input type="text" id="sabado-nombre" required placeholder="Tu nombre completo"
+            class="w-full py-3 px-4 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 placeholder:text-slate-300">
+        </div>
+        <div id="sabado-errorMsg" class="hidden bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl"></div>
+        <button type="submit" id="sabado-submitBtn"
+          class="w-full py-3.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-bold text-sm rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-teal-600/20">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+          Enviar Confirmacion
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- DOMINGO VIEW -->
+  <div id="domingo-view" class="w-full max-w-md hidden">
+    <div class="text-center mb-6">
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-xs font-semibold mb-3 border border-white/20">
+        <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-violet-500"></span></span>
+        Domingo - Cafeteria Guarincito
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Confirmar Racion</h1>
+      <p class="text-white/60 text-sm mt-1">Desayuno 8:30 AM</p>
+    </div>
+    <div class="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden fade-in">
+      <div class="bg-gradient-to-r from-indigo-500 to-violet-600 p-5 text-center">
+        <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-2">
+          <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h2 class="text-xl font-bold text-white">DOMINGO</h2>
+        <p class="text-indigo-100 text-xs mt-0.5">Regencia / Tecnico en Procesos - Desayuno 8:30 AM</p>
+      </div>
+      <form id="domingoForm" class="p-5 space-y-4">
+        <input type="hidden" id="domingo-tipo" value="1">
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Carrera</label>
+          <select id="domingo-carrera" required class="w-full py-3 px-4 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 cursor-pointer">
+            <option value="">Seleccionar carrera...</option>
+          </select>
+        </div>
+        <div>
+          <label id="domingo-codigoLabel" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Codigo de Estudiante</label>
+          <input type="text" id="domingo-codigo" required placeholder="Ej: 79794" maxlength="5"
+            class="w-full py-3 px-4 text-center text-lg rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono font-bold text-slate-700 placeholder:text-slate-300"
+            inputmode="numeric">
+          <p id="domingo-codigoError" class="hidden text-[11px] text-red-500 font-medium mt-1">El codigo debe ser de 5 digitos</p>
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Nombre Completo</label>
+          <input type="text" id="domingo-nombre" required placeholder="Tu nombre completo"
+            class="w-full py-3 px-4 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder:text-slate-300">
+        </div>
+        <div id="domingo-errorMsg" class="hidden bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl"></div>
+        <button type="submit" id="domingo-submitBtn"
+          class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold text-sm rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-indigo-600/20">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+          Enviar Confirmacion
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="success-container" class="w-full max-w-md hidden">
+    <div class="bg-white rounded-3xl shadow-2xl border border-emerald-200 overflow-hidden fade-in text-center">
+      <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 p-6">
+        <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+          <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <h2 class="text-2xl font-bold text-white">CONFIRMACION EXITOSA</h2>
+        <p class="text-emerald-100 text-sm mt-1">Tu registro quedo guardado correctamente</p>
+      </div>
+      <div class="p-6 space-y-3">
+        <div class="flex justify-between text-sm py-2 border-b border-slate-100"><span class="text-slate-500">Codigo:</span><span id="confirmCode" class="font-mono font-bold text-slate-800"></span></div>
+        <div class="flex justify-between text-sm py-2 border-b border-slate-100"><span class="text-slate-500">Nombre:</span><span id="confirmNombre" class="font-semibold text-slate-800"></span></div>
+        <div class="flex justify-between text-sm py-2 border-b border-slate-100"><span class="text-slate-500">Codigo Estudiante:</span><span id="confirmCodigo" class="font-mono font-bold text-slate-800"></span></div>
+        <div class="flex justify-between text-sm py-2 border-b border-slate-100"><span class="text-slate-500">Carrera:</span><span id="confirmCarrera" class="font-semibold text-slate-800"></span></div>
+        <div class="flex justify-between text-sm py-2 border-b border-slate-100"><span class="text-slate-500">Servicio:</span><span id="confirmTipo" class="font-semibold text-slate-800"></span></div>
+        <div class="flex justify-between text-sm py-2"><span class="text-slate-500">Enviado:</span><span id="confirmFecha" class="font-semibold text-slate-800"></span></div>
+      </div>
+      <div class="p-4 border-t border-slate-100">
+        <button onclick="resetForm()" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition-all cursor-pointer">Volver al formulario</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLOSED MESSAGE -->
+  <div id="closed-container" class="w-full max-w-md hidden">
+    <div class="bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden text-center fade-in">
+      <div class="bg-gradient-to-r from-slate-600 to-slate-700 p-6">
+        <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-3"><svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+        <h2 class="text-2xl font-bold text-white">FORMULARIO CERRADO</h2>
+        <p id="closedTimeMsg" class="text-slate-300 text-sm mt-2"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://doztchubrnjlcxpzbhgt.supabase.co';
+    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvenRjaHVicm5qbGN4cHpiaGd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzMDM1NjQsImV4cCI6MjEwMzg3OTU2NH0._dlpaCg91GX--eoBkC9kFnM_CJbmgYNQ7TapBrUHpLo';
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    const now = new Date();
+    const colombiaTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
+    const dayOfWeek = colombiaTime.getDay();
+    const isSaturday = dayOfWeek === 6;
+    const isSunday = dayOfWeek === 0;
+
+    // Show the correct view
+    if (isSaturday) {
+      document.body.classList.add('sabado');
+      document.getElementById('sabado-view').classList.remove('hidden');
+    } else if (isSunday) {
+      document.body.classList.add('domingo');
+      document.getElementById('domingo-view').classList.remove('hidden');
+    } else {
+      document.body.classList.add('sabado');
+      document.getElementById('closed-container').classList.remove('hidden');
+      document.getElementById('closedTimeMsg').textContent = 'Este formulario solo funciona los sabados y domingos.';
+    }
+
+    // SABADO: Filter carreras based on tipo selection
+    const sabadoTipo = document.getElementById('sabado-tipo');
+    const sabadoCarrera = document.getElementById('sabado-carrera');
+    const sabadoCarrerasByTipo = {
+      '2': ['ADEA'],
+      '3': ['REGENCIA', 'TECNICO EN PROCESOS']
+    };
+
+    async function loadSabadoCarreras() {
+      const tipos = ['2', '3'];
+      const allCarreras = [];
+      for (const t of tipos) {
+        const { data } = await db.from('carrera_servicio').select('carrera_id').eq('servicio_id', parseInt(t)).eq('activo', true);
+        const ids = (data || []).map(d => d.carrera_id);
+        if (ids.length > 0) {
+          const { data: carreras } = await db.from('carreras').select('id, nombre').in('id', ids).eq('activo', true);
+          if (carreras) allCarreras.push(...carreras);
+        }
+      }
+      return allCarreras;
+    }
+
+    let allSabadoCarreras = [];
+    loadSabadoCarreras().then(c => { allSabadoCarreras = c; });
+
+    sabadoTipo.addEventListener('change', () => {
+      const tipo = sabadoTipo.value;
+      sabadoCarrera.innerHTML = '<option value="">Seleccionar carrera...</option>';
+      if (!tipo) return;
+      const allowed = sabadoCarrerasByTipo[tipo] || [];
+      allSabadoCarreras.filter(c => allowed.includes(c.nombre.toUpperCase().trim())).forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.nombre;
+        sabadoCarrera.appendChild(opt);
+      });
+    });
+
+    // SABADO: Code input validation
+    const sabadoCodigo = document.getElementById('sabado-codigo');
+    const sabadoCodigoLabel = document.getElementById('sabado-codigoLabel');
+    const sabadoCodigoError = document.getElementById('sabado-codigoError');
+    sabadoCodigo.addEventListener('input', () => {
+      if (sabadoCodigo.value.length > 5) sabadoCodigo.value = sabadoCodigo.value.slice(0, 5);
+      if (sabadoCodigo.value.length >= 5) {
+        sabadoCodigoLabel.classList.add('text-red-500');
+        sabadoCodigoLabel.classList.remove('text-slate-500');
+        sabadoCodigoError.classList.remove('hidden');
+      } else {
+        sabadoCodigoLabel.classList.remove('text-red-500');
+        sabadoCodigoLabel.classList.add('text-slate-500');
+        sabadoCodigoError.classList.add('hidden');
+      }
+    });
+
+    // DOMINGO: Load carreras (REGENCIA + TECNICO EN PROCESOS)
+    async function loadDomingoCarreras() {
+      const { data: carreras } = await db.from('carreras').select('id, nombre').in('nombre', ['REGENCIA', 'TECNICO EN PROCESOS']).eq('activo', true);
+      const select = document.getElementById('domingo-carrera');
+      (carreras || []).forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.nombre;
+        select.appendChild(opt);
+      });
+    }
+    loadDomingoCarreras();
+
+    // DOMINGO: Code input validation
+    const domingoCodigo = document.getElementById('domingo-codigo');
+    const domingoCodigoLabel = document.getElementById('domingo-codigoLabel');
+    const domingoCodigoError = document.getElementById('domingo-codigoError');
+    domingoCodigo.addEventListener('input', () => {
+      if (domingoCodigo.value.length > 5) domingoCodigo.value = domingoCodigo.value.slice(0, 5);
+      if (domingoCodigo.value.length >= 5) {
+        domingoCodigoLabel.classList.add('text-red-500');
+        domingoCodigoLabel.classList.remove('text-slate-500');
+        domingoCodigoError.classList.remove('hidden');
+      } else {
+        domingoCodigoLabel.classList.remove('text-red-500');
+        domingoCodigoLabel.classList.add('text-slate-500');
+        domingoCodigoError.classList.add('hidden');
+      }
+    });
+
+    function timeToMinutes(timeStr) {
+      const [h, m] = timeStr.split(':').map(Number);
+      return h * 60 + m;
+    }
+
+    function isOpenForDay(dayType) {
+      const totalMin = colombiaTime.getHours() * 60 + colombiaTime.getMinutes();
+      if (dayType === 'sabado') {
+        const almFin = timeToMinutes('10:08');
+        const refFin = timeToMinutes('18:00');
+        return totalMin <= almFin || totalMin <= refFin;
+      }
+      if (dayType === 'domingo') {
+        const desFin = timeToMinutes('08:30');
+        return totalMin <= desFin;
+      }
+      return false;
+    }
+
+    // SABADO FORM SUBMIT
+    document.getElementById('sabadoForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!isOpenForDay('sabado')) {
+        showError('sabado', 'El formulario de sabado esta cerrado fuera de horario.');
+        return;
+      }
+      const btn = document.getElementById('sabado-submitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Enviando...';
+
+      const tipo_comida_id = Number(sabadoTipo.value);
+      const carrera_id = Number(sabadoCarrera.value);
+      const codigo_id = sabadoCodigo.value.trim();
+      const nombre = document.getElementById('sabado-nombre').value.trim();
+
+      if (!tipo_comida_id || !carrera_id || !codigo_id || !nombre) {
+        showError('sabado', 'Todos los campos son obligatorios');
+        resetBtn('sabado');
+        return;
+      }
+
+      const { data, error } = await db.rpc('fn_insert_confirmacion_web', {
+        p_codigo_id: codigo_id, p_carrera_id: carrera_id, p_nombre: nombre, p_tipo_comida_id: tipo_comida_id
+      });
+
+      if (error) { showError('sabado', 'Error al enviar. Intenta de nuevo.'); resetBtn('sabado'); return; }
+
+      const result = data?.[0];
+      if (!result?.confirmacion_id) { showError('sabado', 'Registro enviado pero no se pudo obtener el codigo.'); resetBtn('sabado'); return; }
+      if (result.motivo_alerta === 'no_en_padron') { showError('sabado', 'Tu codigo no esta registrado en el padron de beneficiarios.'); resetBtn('sabado'); return; }
+
+      const fecha = new Date().toLocaleString('es-CO', { timeZone: 'America/Bogota' });
+      const tipoNombre = tipo_comida_id === 2 ? 'Almuerzo' : 'Refrigerio';
+      showSuccess(result.confirmacion_id, codigo_id, nombre, sabadoCarrera.options[sabadoCarrera.selectedIndex]?.text || '', fecha, tipoNombre);
+      resetBtn('sabado');
+    });
+
+    // DOMINGO FORM SUBMIT
+    document.getElementById('domingoForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!isOpenForDay('domingo')) {
+        showError('domingo', 'El formulario de domingo esta cerrado fuera de horario.');
+        return;
+      }
+      const btn = document.getElementById('domingo-submitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Enviando...';
+
+      const tipo_comida_id = 1;
+      const carrera_id = Number(document.getElementById('domingo-carrera').value);
+      const codigo_id = domingoCodigo.value.trim();
+      const nombre = document.getElementById('domingo-nombre').value.trim();
+
+      if (!carrera_id || !codigo_id || !nombre) {
+        showError('domingo', 'Todos los campos son obligatorios');
+        resetBtn('domingo');
+        return;
+      }
+
+      const { data, error } = await db.rpc('fn_insert_confirmacion_web', {
+        p_codigo_id: codigo_id, p_carrera_id: carrera_id, p_nombre: nombre, p_tipo_comida_id: tipo_comida_id
+      });
+
+      if (error) { showError('domingo', 'Error al enviar. Intenta de nuevo.'); resetBtn('domingo'); return; }
+
+      const result = data?.[0];
+      if (!result?.confirmacion_id) { showError('domingo', 'Registro enviado pero no se pudo obtener el codigo.'); resetBtn('domingo'); return; }
+      if (result.motivo_alerta === 'no_en_padron') { showError('domingo', 'Tu codigo no esta registrado en el padron de beneficiarios.'); resetBtn('domingo'); return; }
+
+      const fecha = new Date().toLocaleString('es-CO', { timeZone: 'America/Bogota' });
+      const domingoCarrera = document.getElementById('domingo-carrera');
+      showSuccess(result.confirmacion_id, codigo_id, nombre, domingoCarrera.options[domingoCarrera.selectedIndex]?.text || '', fecha, 'Desayuno');
+      resetBtn('domingo');
+    });
+
+    function showError(form, msg) {
+      const div = document.getElementById(`${form}-errorMsg`);
+      div.textContent = msg;
+      div.classList.remove('hidden');
+    }
+
+    function resetBtn(form) {
+      const btn = document.getElementById(`${form}-submitBtn`);
+      btn.disabled = false;
+      btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg> Enviar Confirmacion';
+    }
+
+    function showSuccess(id, codigo, nombre, carrera, fecha, tipo) {
+      document.getElementById('sabado-view').classList.add('hidden');
+      document.getElementById('domingo-view').classList.add('hidden');
+      document.getElementById('success-container').classList.remove('hidden');
+      document.getElementById('confirmCode').textContent = String(id).padStart(4, '0');
+      document.getElementById('confirmNombre').textContent = nombre;
+      document.getElementById('confirmCodigo').textContent = codigo;
+      document.getElementById('confirmCarrera').textContent = carrera;
+      document.getElementById('confirmTipo').textContent = tipo;
+      document.getElementById('confirmFecha').textContent = fecha;
+    }
+
+    function resetForm() {
+      document.getElementById('success-container').classList.add('hidden');
+      if (isSaturday) document.getElementById('sabado-view').classList.remove('hidden');
+      if (isSunday) document.getElementById('domingo-view').classList.remove('hidden');
+      document.getElementById('sabadoForm')?.reset();
+      document.getElementById('domingoForm')?.reset();
+    }
+  </script>
+</body>
+</html>
