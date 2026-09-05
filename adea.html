@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fin de Semana - Cafeteria Guarincito</title>
+  <title>ADEA - Cafeteria Guarincito</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <style>
@@ -11,31 +11,31 @@
     body { font-family: 'Inter', sans-serif; }
     .fade-in { animation: fadeIn 0.3s ease-in; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .code-glow { text-shadow: 0 0 20px rgba(124, 58, 237, 0.3); }
+    .code-glow { text-shadow: 0 0 20px rgba(245, 158, 11, 0.3); }
     select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; padding-right: 40px; cursor: pointer; }
-    select:hover { border-color: #7c3aed; background-color: #faf5ff; }
-    select:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15); background-color: #faf5ff; }
+    select:hover { border-color: #f59e0b; background-color: #fffbeb; }
+    select:focus { border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15); background-color: #fffbeb; }
     select option { padding: 12px 16px; font-size: 14px; font-weight: 500; background: white; color: #334155; border-bottom: 1px solid #f1f5f9; }
-    select option:hover { background: #ede9fe; color: #5b21b6; }
+    select option:hover { background: #fef3c7; color: #92400e; }
     select option:first-child { color: #94a3b8; font-weight: 400; }
-    select option:not(:first-child):hover { background: #ddd6fe; }
+    select option:not(:first-child):hover { background: #fde68a; }
   </style>
 </head>
-<body class="bg-gradient-to-br from-slate-50 via-violet-50/30 to-slate-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-gradient-to-br from-slate-50 via-amber-50/30 to-slate-100 min-h-screen flex items-center justify-center p-4">
 
-  <!-- FORM -->
+  <!-- FORMULARIO ADEA -->
   <div id="form-container" class="w-full max-w-md">
     <div class="bg-white rounded-2xl shadow-xl border border-slate-200/80 overflow-hidden">
       <!-- Header -->
-      <div id="formHeader" class="bg-gradient-to-r from-violet-600 to-violet-700 p-6 text-center">
+      <div class="bg-gradient-to-r from-amber-500 to-amber-600 p-6 text-center">
         <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
           <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
           </svg>
         </div>
-        <h1 id="formTitle" class="text-xl font-bold text-white">Confirmar Refrigerio</h1>
-        <p class="text-violet-100 text-sm mt-1">Cafeteria Guarincito</p>
-        <div id="formBadge" class="mt-2 inline-block px-3 py-1 bg-white/20 rounded-full text-xs font-bold text-white">REGENCIA / TECNICO</div>
+        <h1 class="text-xl font-bold text-white">Confirmar Almuerzo ADEA</h1>
+        <p class="text-amber-100 text-sm mt-1">Cafeteria Guarincito</p>
+        <div class="mt-2 inline-block px-3 py-1 bg-white/20 rounded-full text-xs font-bold text-white">ADEA - SABADO</div>
       </div>
 
       <!-- CERRADO -->
@@ -46,33 +46,27 @@
           </svg>
         </div>
         <h3 class="text-lg font-bold text-slate-800 mb-2">Formulario Cerrado</h3>
-        <p id="closedTimeMsg" class="text-sm text-slate-500"></p>
+        <p id="closedTimeMsg" class="text-sm text-slate-500">Este formulario solo funciona los <strong>sabados</strong> de <strong>5:00 AM</strong> a <strong>10:08 AM</strong>.</p>
         <p class="text-xs text-slate-400 mt-2">Horario de Colombia (UTC-5)</p>
       </div>
 
       <!-- Form -->
       <form id="confirmForm" class="p-6 space-y-4">
         <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Carrera</label>
-          <select id="carrera" required class="w-full py-2.5 px-3 text-sm rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500 font-medium text-slate-700">
-            <option value="">Selecciona tu carrera...</option>
-          </select>
-        </div>
-        <div>
-          <label id="codigoLabel" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5 transition-colors">Codigo ID (4-5 digitos)</label>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Codigo ID (4-5 digitos)</label>
           <input type="text" id="codigo" required maxlength="6" placeholder="Ej: 79794"
-            class="w-full py-2.5 px-3 text-sm rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500 font-mono font-bold text-slate-700 placeholder:text-slate-300 transition-all"
+            class="w-full py-2.5 px-3 text-sm rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono font-bold text-slate-700 placeholder:text-slate-300 transition-all"
             inputmode="numeric">
           <p id="codigoError" class="hidden text-xs font-bold text-red-500 mt-1.5 transition-all">Maximo 5 digitos</p>
         </div>
         <div>
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Nombre completo</label>
           <input type="text" id="nombre" required placeholder="Tu nombre como aparece en el padron"
-            class="w-full py-2.5 px-3 text-sm rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500 font-medium text-slate-700 placeholder:text-slate-300">
+            class="w-full py-2.5 px-3 text-sm rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium text-slate-700 placeholder:text-slate-300">
         </div>
         <div id="errorMsg" class="hidden bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl"></div>
         <button type="submit" id="submitBtn"
-          class="w-full py-3 bg-violet-600 hover:bg-violet-700 text-white font-bold text-sm rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+          class="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
           </svg>
@@ -81,7 +75,7 @@
       </form>
 
       <div class="px-6 pb-6">
-        <p id="formSchedule" class="text-center text-xs text-slate-400 mt-2"></p>
+        <p class="text-center text-xs text-slate-400 mt-2">Sabado 5:00 AM - 10:08 AM</p>
       </div>
     </div>
   </div>
@@ -108,7 +102,6 @@
           <div class="flex justify-between text-sm"><span class="text-slate-500">Nombre:</span><span id="confirmNombre" class="font-semibold text-slate-800"></span></div>
           <div class="flex justify-between text-sm"><span class="text-slate-500">Codigo:</span><span id="confirmCodigo" class="font-mono font-bold text-slate-800"></span></div>
           <div class="flex justify-between text-sm"><span class="text-slate-500">Carrera:</span><span id="confirmCarrera" class="font-semibold text-slate-800"></span></div>
-          <div class="flex justify-between text-sm"><span class="text-slate-500">Servicio:</span><span id="confirmTipo" class="font-semibold text-slate-800"></span></div>
           <div class="flex justify-between text-sm"><span class="text-slate-500">Fecha:</span><span id="confirmFecha" class="font-semibold text-slate-800"></span></div>
         </div>
         <button onclick="resetForm()"
@@ -129,64 +122,17 @@
     const dayOfWeek = colombiaTime.getDay();
     const totalMin = colombiaTime.getHours() * 60 + colombiaTime.getMinutes();
     const isSaturday = dayOfWeek === 6;
-    const isSunday = dayOfWeek === 0;
+    const horaInicio = 5 * 60;
+    const horaFin = 10 * 60 + 8;
+    const isOpen = isSaturday && totalMin >= horaInicio && totalMin <= horaFin;
 
-    let TIPO_COMIDA_ID, TIPO_NOMBRE, CARRERAS_FILTER, HORA_FIN, HEADER_COLOR, BADGE_TEXT, SCHEDULE_TEXT;
-
-    if (isSaturday) {
-      TIPO_COMIDA_ID = 3;
-      TIPO_NOMBRE = 'Refrigerio';
-      CARRERAS_FILTER = ['REGENCIA', 'TECNICO EN PROCESOS'];
-      HORA_FIN = 18 * 60;
-      HEADER_COLOR = 'from-violet-600 to-violet-700';
-      BADGE_TEXT = 'SABADO - REFRIGERIO';
-      SCHEDULE_TEXT = 'Sabado 5:00 AM - 6:00 PM';
-    } else if (isSunday) {
-      TIPO_COMIDA_ID = 1;
-      TIPO_NOMBRE = 'Desayuno';
-      CARRERAS_FILTER = ['REGENCIA', 'TECNICO EN PROCESOS'];
-      HORA_FIN = 8 * 60 + 30;
-      HEADER_COLOR = 'from-indigo-600 to-indigo-700';
-      BADGE_TEXT = 'DOMINGO - DESAYUNO';
-      SCHEDULE_TEXT = 'Domingo 5:00 AM - 8:30 AM';
-    }
-
-    const isOpen = (isSaturday || isSunday) && totalMin <= HORA_FIN;
-
-    if (isSaturday || isSunday) {
-      document.getElementById('formHeader').className = `bg-gradient-to-r ${HEADER_COLOR} p-6 text-center`;
-      document.getElementById('formTitle').textContent = `Confirmar ${TIPO_NOMBRE}`;
-      document.getElementById('formBadge').textContent = BADGE_TEXT;
-      document.getElementById('formSchedule').textContent = SCHEDULE_TEXT;
-      document.querySelector('.code-glow')?.classList.remove('code-glow');
-    }
-
-    if (!isOpen && (isSaturday || isSunday)) {
+    if (!isOpen) {
       document.getElementById('confirmForm').classList.add('hidden');
       document.getElementById('closedMsg').classList.remove('hidden');
-      document.getElementById('closedTimeMsg').innerHTML = `Este formulario solo funciona los <strong>${isSaturday ? 'sabados' : 'domingos'}</strong> hasta las <strong>${isSaturday ? '6:00 PM' : '8:30 AM'}</strong>.`;
-    } else if (!isSaturday && !isSunday) {
-      document.getElementById('confirmForm').classList.add('hidden');
-      document.getElementById('closedMsg').classList.remove('hidden');
-      document.getElementById('closedTimeMsg').innerHTML = 'Este formulario solo funciona los <strong>sabados</strong> y <strong>domingos</strong>.';
     }
 
-    // Load carreras
-    async function loadCarreras() {
-      const { data: carreras } = await db.from('carreras').select('id, nombre').in('nombre', CARRERAS_FILTER || []).eq('activo', true);
-      const select = document.getElementById('carrera');
-      (carreras || []).forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.id;
-        opt.textContent = c.nombre;
-        select.appendChild(opt);
-      });
-    }
-    if (CARRERAS_FILTER) loadCarreras();
-
-    // Code validation
     const codigoInput = document.getElementById('codigo');
-    const codigoLabel = document.getElementById('codigoLabel');
+    const codigoLabel = document.querySelector('label[for="codigo"]') || codigoInput.previousElementSibling;
     const codigoError = document.getElementById('codigoError');
     codigoInput.addEventListener('input', () => {
       if (codigoInput.value.length > 5) codigoInput.value = codigoInput.value.slice(0, 5);
@@ -194,21 +140,22 @@
       else { codigoLabel.classList.remove('text-red-500'); codigoLabel.classList.add('text-slate-500'); codigoError.classList.add('hidden'); }
     });
 
-    // Submit
     document.getElementById('confirmForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('submitBtn');
       btn.disabled = true;
       btn.innerHTML = '<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Enviando...';
 
-      const carrera_id = Number(document.getElementById('carrera').value);
       const codigo_id = codigoInput.value.trim();
       const nombre = document.getElementById('nombre').value.trim();
 
-      if (!carrera_id || !codigo_id || !nombre) { showError('Todos los campos son obligatorios'); resetBtn(); return; }
+      if (!codigo_id || !nombre) { showError('Todos los campos son obligatorios'); resetBtn(); return; }
+
+      const { data: adea } = await db.from('carreras').select('id').eq('nombre', 'ADEA').single();
+      if (!adea) { showError('Error al cargar carrera ADEA'); resetBtn(); return; }
 
       const { data, error } = await db.rpc('fn_insert_confirmacion_web', {
-        p_codigo_id: codigo_id, p_carrera_id: carrera_id, p_nombre: nombre, p_tipo_comida_id: TIPO_COMIDA_ID
+        p_codigo_id: codigo_id, p_carrera_id: adea.id, p_nombre: nombre, p_tipo_comida_id: 2
       });
 
       if (error) { showError('Error al enviar. Intenta de nuevo.'); resetBtn(); return; }
@@ -217,21 +164,19 @@
       if (result.motivo_alerta === 'no_en_padron') { showError('Tu codigo no esta registrado en el padron de beneficiarios.'); resetBtn(); return; }
 
       const fecha = new Date().toLocaleString('es-CO', { timeZone: 'America/Bogota' });
-      const carreraSelect = document.getElementById('carrera');
-      showSuccess(result.confirmacion_id, codigo_id, nombre, carreraSelect.options[carreraSelect.selectedIndex]?.text || '', fecha, TIPO_NOMBRE);
+      showSuccess(result.confirmacion_id, codigo_id, nombre, 'ADEA', fecha);
       resetBtn();
     });
 
     function showError(msg) { const d = document.getElementById('errorMsg'); d.textContent = msg; d.classList.remove('hidden'); }
     function resetBtn() { const b = document.getElementById('submitBtn'); b.disabled = false; b.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg> Enviar Confirmacion'; }
-    function showSuccess(id, codigo, nombre, carrera, fecha, tipo) {
+    function showSuccess(id, codigo, nombre, carrera, fecha) {
       document.getElementById('form-container').classList.add('hidden');
       document.getElementById('success-container').classList.remove('hidden');
       document.getElementById('confirmCode').textContent = String(id).padStart(4, '0');
       document.getElementById('confirmNombre').textContent = nombre;
       document.getElementById('confirmCodigo').textContent = codigo;
       document.getElementById('confirmCarrera').textContent = carrera;
-      document.getElementById('confirmTipo').textContent = tipo;
       document.getElementById('confirmFecha').textContent = fecha;
     }
     function resetForm() { document.getElementById('success-container').classList.add('hidden'); document.getElementById('form-container').classList.remove('hidden'); document.getElementById('confirmForm').reset(); }

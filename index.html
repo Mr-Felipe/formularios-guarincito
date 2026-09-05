@@ -5,37 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Formularios - Cafeteria Guarincito</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 1rem; background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f766e 100%); }
-    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; max-width: 960px; width: 100%; }
-    .card { background: white; border-radius: 1.5rem; padding: 2rem; text-decoration: none; color: inherit; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 24px rgba(0,0,0,0.1); }
-    .card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
-    .card-icon { width: 56px; height: 56px; border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 1rem; }
-    .card h2 { font-size: 1.125rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .card p { font-size: 0.8rem; color: #64748b; line-height: 1.5; }
-    .alm .card-icon { background: #ecfdf5; color: #059669; }
-    .ref .card-icon { background: #eff6ff; color: #2563eb; }
-    .fin .card-icon { background: #faf5ff; color: #7c3aed; }
+    body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
-<body>
-  <div class="cards">
-    <a href="almuerzo.html" class="card alm">
-      <div class="card-icon">&#127859;</div>
-      <h2>Almuerzo Diurno</h2>
-      <p>Lunes a viernes - Jornada diurna. Horario: 11:30 AM a 2:30 PM</p>
-    </a>
-    <a href="refrigerio.html" class="card ref">
-      <div class="card-icon">&#127866;</div>
-      <h2>Refrigerio Nocturno</h2>
-      <p>Lunes a viernes - Jornada nocturna. Horario: 6:30 PM a 8:30 PM</p>
-    </a>
-    <a href="fin-de-semana.html" class="card fin">
-      <div class="card-icon">&#128197;</div>
-      <h2>Fin de Semana</h2>
-      <p>Sabado (ADEA/Regencia/Tecnico) y Domingo (Desayuno)</p>
-    </a>
+<body class="bg-gradient-to-br from-slate-50 via-emerald-50/20 to-slate-100 min-h-screen flex items-center justify-center p-4">
+  <div class="max-w-4xl w-full">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-extrabold text-slate-900">Cafeteria Guarincito</h1>
+      <p class="text-sm text-slate-500 mt-1">Selecciona tu formulario de confirmacion</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <a href="almuerzo.html" class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-emerald-300 transition-all group">
+        <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h2 class="font-bold text-slate-900">Almuerzo Diurno</h2>
+        <p class="text-xs text-slate-500 mt-1">Lun-Vie | Jornada diurna | 11:30 AM - 2:30 PM</p>
+      </a>
+      <a href="refrigerio.html" class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-blue-300 transition-all group">
+        <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        </div>
+        <h2 class="font-bold text-slate-900">Refrigerio Nocturno</h2>
+        <p class="text-xs text-slate-500 mt-1">Lun-Vie | Jornada nocturna | 6:30 PM - 8:30 PM</p>
+      </a>
+      <a href="adea.html" class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-amber-300 transition-all group">
+        <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        </div>
+        <h2 class="font-bold text-slate-900">ADEA - Almuerzo</h2>
+        <p class="text-xs text-slate-500 mt-1">Solo sabados | ADEA | 5:00 AM - 10:08 AM</p>
+      </a>
+      <a href="fin-de-semana.html" class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-violet-300 transition-all group">
+        <div class="w-12 h-12 rounded-xl bg-violet-100 text-violet-700 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        </div>
+        <h2 class="font-bold text-slate-900">Fin de Semana</h2>
+        <p class="text-xs text-slate-500 mt-1">Sab: Refrigerio 5AM-6PM | Dom: Desayuno 5AM-8:30AM</p>
+      </a>
+    </div>
+    <p class="text-center text-xs text-slate-400 mt-6">Regencia / Tecnico en Procesos / ADEA</p>
   </div>
 </body>
 </html>
