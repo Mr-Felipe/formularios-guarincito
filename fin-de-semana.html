@@ -131,12 +131,13 @@
     const isSaturday = dayOfWeek === 6;
     const isSunday = dayOfWeek === 0;
 
-    let TIPO_COMIDA_ID, TIPO_NOMBRE, CARRERAS_FILTER, HORA_FIN, HEADER_COLOR, BADGE_TEXT, SCHEDULE_TEXT;
+    let TIPO_COMIDA_ID, TIPO_NOMBRE, CARRERAS_FILTER, HORA_INICIO, HORA_FIN, HEADER_COLOR, BADGE_TEXT, SCHEDULE_TEXT;
 
     if (isSaturday) {
       TIPO_COMIDA_ID = 3;
       TIPO_NOMBRE = 'Refrigerio';
       CARRERAS_FILTER = ['REGENCIA', 'TECNICO EN PROCESOS'];
+      HORA_INICIO = 5 * 60;
       HORA_FIN = 18 * 60;
       HEADER_COLOR = 'from-violet-600 to-violet-700';
       BADGE_TEXT = 'SABADO - REFRIGERIO';
@@ -145,13 +146,14 @@
       TIPO_COMIDA_ID = 1;
       TIPO_NOMBRE = 'Desayuno';
       CARRERAS_FILTER = ['REGENCIA', 'TECNICO EN PROCESOS'];
+      HORA_INICIO = 5 * 60;
       HORA_FIN = 8 * 60 + 30;
       HEADER_COLOR = 'from-indigo-600 to-indigo-700';
       BADGE_TEXT = 'DOMINGO - DESAYUNO';
       SCHEDULE_TEXT = 'Domingo 5:00 AM - 8:30 AM';
     }
 
-    const isOpen = (isSaturday || isSunday) && totalMin <= HORA_FIN;
+    const isOpen = (isSaturday || isSunday) && totalMin >= HORA_INICIO && totalMin <= HORA_FIN;
 
     if (isSaturday || isSunday) {
       document.getElementById('formHeader').className = `bg-gradient-to-r ${HEADER_COLOR} p-6 text-center`;
@@ -164,11 +166,11 @@
     if (!isOpen && (isSaturday || isSunday)) {
       document.getElementById('confirmForm').classList.add('hidden');
       document.getElementById('closedMsg').classList.remove('hidden');
-      document.getElementById('closedTimeMsg').innerHTML = `Este formulario solo funciona los <strong>${isSaturday ? 'sabados' : 'domingos'}</strong> hasta las <strong>${isSaturday ? '6:00 PM' : '8:30 AM'}</strong>.`;
+      document.getElementById('closedTimeMsg').innerHTML = `Este formulario solo funciona los <strong>${isSaturday ? 'sabados' : 'domingos'}</strong> de <strong>5:00 AM</strong> a <strong>${isSaturday ? '6:00 PM' : '8:30 AM'}</strong>.`;
     } else if (!isSaturday && !isSunday) {
       document.getElementById('confirmForm').classList.add('hidden');
       document.getElementById('closedMsg').classList.remove('hidden');
-      document.getElementById('closedTimeMsg').innerHTML = 'Este formulario solo funciona los <strong>sabados</strong> y <strong>domingos</strong>.';
+      document.getElementById('closedTimeMsg').innerHTML = 'Este formulario solo funciona los <strong>sabados</strong> y <strong>domingos</strong> de <strong>5:00 AM</strong> en adelante.';
     }
 
     // Load carreras
